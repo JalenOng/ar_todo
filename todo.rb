@@ -9,7 +9,6 @@ require_relative 'app/todo.rb'
 
 def add_task(desc)
   index = Task.count
-
   my_task = Task.create(completion: 0, new_id: index+1, desc: desc)
   puts "Appended #{desc} to your TODO list."
 end
@@ -21,9 +20,34 @@ def list
     x.update(new_id: n)
     puts "#{x.new_id}. #{mark_complete(x.completion)} #{x.desc}"
     n += 1
-
   end
+end
 
+def list_completed
+
+
+  list = Task.where(completion: 1)
+  list.order(:new_id)
+  n = 1
+  puts "Completed Tasks:"
+  list.find_each do |x|
+    x.update(new_id: n)
+    puts "#{x.new_id}. #{mark_complete(x.completion)} #{x.desc}"
+    n += 1
+  end
+end
+
+def list_pending
+
+  list = Task.where(completion: 0)
+  list.order(:new_id)
+  n = 1
+  puts "Pending Tasks:"
+  list.find_each do |x|
+    x.update(new_id: n)
+    puts "#{x.new_id}. #{mark_complete(x.completion)} #{x.desc}"
+    n += 1
+  end
 end
 
 
@@ -55,7 +79,7 @@ def start
 
 
   if task == "add"
-    puts "What task do you want to add?"
+    # puts "What task do you want to add?"
     command = ARGV
     task_desc = command[(1..-1)].join(" ")
     add_task(task_desc)
@@ -64,16 +88,22 @@ def start
     p list
 
   elsif task == "delete"
-    puts "Which task to delete?"
+    # puts "Which task to delete?"
     command = ARGV
     task_desc = command[1]
     delete_task(task_desc)
 
   elsif task == "complete"
-    puts "Which task is completed?"
+    # puts "Which task is completed?"
     command = ARGV
     task_desc = command[1]
     completed(task_desc)
+
+  elsif task == "pending"
+    list_pending
+
+  elsif task == "completed"
+    list_completed
 
   elsif task == "quit"
 
@@ -82,6 +112,8 @@ def start
 
   end
 end
+
+
 
 # def start
 #   p list
